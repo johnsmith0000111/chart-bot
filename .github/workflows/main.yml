@@ -1,7 +1,7 @@
-name: Save Chart Every Minute
+name: Save Chart to GitHub
 on:
   schedule:
-    - cron: '*/5 * * * *' # Har 5 minute baad trigger hoga
+    - cron: '0 * * * *' # Har ghante
   workflow_dispatch:
 
 jobs:
@@ -11,15 +11,16 @@ jobs:
       contents: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4  # v3 se v4 kar diya
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v5  # v4 se v5 kar diya
         with:
           python-version: '3.9'
 
       - name: Install Dependencies
-        run: pip install selenium webdriver_manager
+        run: |
+          pip install selenium webdriver_manager
 
       - name: Run Bot
         run: python bot.py
