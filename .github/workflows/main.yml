@@ -1,8 +1,8 @@
-name: Save Chart to GitHub
+name: Save Chart Every 5 Minutes
 on:
   schedule:
-    - cron: '0 * * * *' # Har ghante
-  workflow_dispatch:
+    - cron: '*/5 * * * *' # Har 5 minute baad trigger hoga
+  workflow_dispatch: # Manual button
 
 jobs:
   run-bot:
@@ -11,10 +11,10 @@ jobs:
       contents: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4  # v3 se v4 kar diya
+        uses: actions/checkout@v4
 
       - name: Setup Python
-        uses: actions/setup-python@v5  # v4 se v5 kar diya
+        uses: actions/setup-python@v5
         with:
           python-version: '3.9'
 
