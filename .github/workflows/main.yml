@@ -1,0 +1,26 @@
+name: Save Chart to GitHub
+on:
+  schedule:
+    - cron: '0 * * * *' # Har ghante chalega
+  workflow_dispatch: # Manual button
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Yeh sabse zaruri line hai
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install Dependencies
+        run: |
+          pip install selenium webdriver_manager
+
+      - name: Run Bot
+        run: python bot.py
