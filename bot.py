@@ -6,16 +6,13 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 
-# TradingView URL
 URL = "https://www.tradingview.com/chart/?symbol=EURUSD"
 
 def take_screenshot():
-    # Folder setup (Repository ke andar 'screenshots' naam ka folder)
     folder = "screenshots"
     if not os.path.exists(folder):
         os.makedirs(folder)
 
-    # Browser Settings
     options = Options()
     options.add_argument("--headless")
     options.add_argument("--no-sandbox")
@@ -25,25 +22,32 @@ def take_screenshot():
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
     
     try:
-        print("Chart load ho raha hai...")
         driver.get(URL)
-        time.sleep(30) # Indicators load hone ka wait
+        time.sleep(20) # Initial load
         
-        # Filename with Date and Time
-        filename = datetime.now().strftime("%Y-%m-%d_%H-%M.png")
-        file_path = os.path.join(folder, filename)
-        
-        driver.save_screenshot(file_path)
-        print(f"Screenshot save ho gaya: {file_path}")
+        # Hum 5 baar screenshot lenge har run mein (5 minutes total)
+        # GitHub Actions ka ek session max 6 hours tak chal sakta hai
+        for i in range(5): 
+            filename = datetime.now().strftime("%H-%M-%S.png")
+            file_path = os.path.join(folder, filename)
+            
+            driver.save_screenshot(file_path)
+            print(f"Saved: {filename}")
+            
+            # Git commands to push immediately
+            os.system("git config --global user.name 'github-actions'")
+            os.system("git config --global user.email 'github-actions@github.com'")
+            os.system("git add .")
+            os.system(f"git commit -m 'Minute Update: {filename}'")
+            os.system("git push")
+            
+            print("Waiting 60 seconds for next one...")
+            time.sleep(60) # 1 minute ka wait
+            driver.refresh() # Chart refresh karne ke liye
+            time.sleep(15)
+            
     finally:
         driver.quit()
-
-    # GitHub par Push karne ki commands
-    os.system("git config --global user.name 'github-actions'")
-    os.system("git config --global user.email 'github-actions@github.com'")
-    os.system("git add .")
-    os.system(f"git commit -m 'Auto-update chart: {filename}'")
-    os.system("git push")
 
 if __name__ == "__main__":
     take_screenshot()
